@@ -1,6 +1,7 @@
 package com.es.sessionsecurity.controller
 
 import com.es.sessionsecurity.model.Usuario
+import com.es.sessionsecurity.model.UsuarioRequest
 import com.es.sessionsecurity.service.UsuarioService
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
@@ -36,7 +37,6 @@ class UsuarioController {
          */
         var cookie: Cookie = Cookie("tokenSession", token)
 
-
         // 3 INSERTAR LA COOKIE EN LA RESPUESTA
         /*
             a) Debemos incluir dentro de la respuesta la cookie que hemos creado en el punto anterior
@@ -48,5 +48,22 @@ class UsuarioController {
         // RESPUESTA
         return ResponseEntity(mapOf("message" to "login correcto"), HttpStatus.OK)
 
+    }
+
+    @PostMapping("/alta")
+    fun registrarUsuario(
+        @RequestBody usuarioRequest: UsuarioRequest
+    ): ResponseEntity<Any> {
+
+        val usuarioCreado = usuarioService.crearUsuario(usuarioRequest)
+
+        return ResponseEntity(
+            mapOf(
+                "id" to usuarioCreado.id,
+                "nombre" to usuarioCreado.nombre,
+                "message" to "Usuario creado correctamente"
+            ),
+            HttpStatus.CREATED
+        )
     }
 }

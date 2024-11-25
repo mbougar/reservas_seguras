@@ -44,5 +44,5 @@ class CipherUtils {
         return String(plainText, Charsets.UTF_8)
     }
 
-
+    val key = "3e9378ec4c7645f0f6cd9690d7c56184"
 }

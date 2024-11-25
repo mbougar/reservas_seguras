@@ -60,7 +60,7 @@ Debemos implementar una nueva funcionalidad dentro de nuestra API que dé la pos
 localhost:8080/usuarios/alta
 ``
 
-Cuando insertamos el usuario dentro de la base de datos, dicho usuario tiene que quedar almacenado junto con su password cifrada (puedes usar el mismo método que en el punto 1)
+Cuando insertamos el usuario dentro de la base de datos, dicho usuario tiene que quedar almacenado junto con su password cifrada (puedes usar el mismo método que en el punto 1) o usar Bcript como Hash.
 
 3. **Campo ROL para usuario**
 

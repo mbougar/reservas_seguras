@@ -1,13 +1,23 @@
 package com.es.sessionsecurity.controller
 
+import com.es.sessionsecurity.error.exception.ForbiddenException
+import com.es.sessionsecurity.error.exception.NotAuthorizedException
+import com.es.sessionsecurity.error.exception.NotFoundException
 import com.es.sessionsecurity.model.Reserva
+import com.es.sessionsecurity.model.Rol
+import com.es.sessionsecurity.model.Usuario
+import com.es.sessionsecurity.repository.ReservaRepository
+import com.es.sessionsecurity.repository.UsuarioRepository
 import com.es.sessionsecurity.service.ReservaService
 import com.es.sessionsecurity.service.SessionService
+import com.es.sessionsecurity.service.UsuarioService
+import com.es.sessionsecurity.util.CipherUtils
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -34,51 +44,24 @@ class ReservaController {
         request: HttpServletRequest
     ) : ResponseEntity<List<Reserva>?> {
 
-        /*
-        COMPROBAR QUE LA PETICIÓN ESTÁ CORRECTAMENTE AUTORIZADA PARA REALIZAR ESTA OPERACIÓN
-         */
-        // 1º Extraemos la cookie
         val cookie: Cookie? = request.cookies.find{ c: Cookie? -> c?.name == "tokenSession"}
         val token: String? = cookie?.value
 
-        // 2º Comprobar la validez del token
-        if (sessionService.checkToken(token)) {
-            //Realiza la consulta a la base de datos
-            return ResponseEntity(null, HttpStatus.OK) //cammbiar null por las reservas
-        }
+        val reservas = reservaService.getReservasByNombre(nombre, token)
 
-        // CÓDIGO AQUÍ
-
-        /*
-        LLAMAR AL SERVICE PARA REALIZAR LA L.N. Y LA LLAMADA A LA BASE DE DATOS
-         */
-        // CÓDIGO AQUÍ
-
-        // RESPUESTA
-        return ResponseEntity<List<Reserva>?>(null, HttpStatus.OK); // cambiar null por las reservas
-
+        return ResponseEntity(reservas, HttpStatus.OK)
     }
 
-    /*
-    INSERTAR UNA NUEVA RESERVA
-     */
     @PostMapping("/")
     fun insert(
-        @RequestBody nuevaReserva: Reserva
-    ) : ResponseEntity<Reserva?>{
+        @RequestBody nuevaReserva: Reserva,
+        request: HttpServletRequest
+    ): ResponseEntity<Reserva?> {
+        val cookie: Cookie? = request.cookies?.find { it.name == "tokenSession" }
+        val token: String? = cookie?.value
 
-        /*
-        COMPROBAR QUE LA PETICIÓN ESTÁ CORRECTAMENTE AUTORIZADA PARA REALIZAR ESTA OPERACIÓN
-         */
-        // CÓDIGO AQUÍ
+        val reserva = reservaService.crearReserva(nuevaReserva, token)
 
-        /*
-        LLAMAR AL SERVICE PARA REALIZAR LA L.N. Y LA LLAMADA A LA BASE DE DATOS
-         */
-        // CÓDIGO AQUÍ
-
-        // RESPUESTA
-        return ResponseEntity<Reserva?>(null, HttpStatus.CREATED); // cambiar null por la reserva
+        return ResponseEntity(reserva, HttpStatus.CREATED)
     }
-
 }

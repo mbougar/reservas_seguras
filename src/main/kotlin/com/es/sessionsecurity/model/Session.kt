@@ -14,7 +14,4 @@ data class Session(
     @JoinColumn(name = "id_usuario")
     var usuario: Usuario,
     var fechaExp: LocalDateTime
-) {
-
-
-}
+)
